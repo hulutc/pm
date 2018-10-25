@@ -1,7 +1,6 @@
 package Treasure;
 
 import PM.PM;
-import Treasure.Tool;
 import Role.Role;
 
 public class PokeBall extends Tool {

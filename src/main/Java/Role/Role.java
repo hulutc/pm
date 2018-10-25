@@ -32,6 +32,24 @@ public class Role {
         this.pms.add(pm);
     }
 
+    /*
+    精灵死亡后，更换精灵
+     */
+    public PM change_pm(){
+        PM pm = null;
+        for(int i=0; i<pms.size(); i++){
+            if(pms.get(i).hp > 0){
+                pm = pms.get(i);
+                pms.remove(i);
+                break;
+            }
+        }
+        if(pm != null) {
+            pms.add(0, pm);
+        }
+        return pm;
+    }
+
     public void alter_pm(int new_index){
         System.out.println("alter pm");
         PM old = pms.get(0);

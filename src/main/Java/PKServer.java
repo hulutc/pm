@@ -1,3 +1,7 @@
+/*
+ * tiancheng copyrights reserved
+ */
+
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -7,7 +11,6 @@ import PM.PM;
 import Scene.GrassArena;
 import Role.Role;
 import Treasure.HaoShangYao;
-import Treasure.Tool;
 
 public class PKServer extends Thread {
     private ServerSocket serverSocket;
@@ -53,7 +56,7 @@ public class PKServer extends Thread {
         String ret = "";
         switch (action) {
             case "attack":
-                ret = ga.attack();
+//                ret = ga.attack();
                 break;
             case "alter":
                 ret = ga.alter(role1, 2);
@@ -123,7 +126,8 @@ public class PKServer extends Thread {
 //    }
 
     public GrassArena createGrassArena(Role r1, Role r2) {
-        GrassArena ga = new GrassArena(r1, r2);
+        GrassArena ga = new GrassArena(r1, new PM());
+//        GrassArena ga = new GrassArena(r1, r2);
         return ga;
     }
 

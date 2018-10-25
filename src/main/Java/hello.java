@@ -1,9 +1,19 @@
+/*
+ * tiancheng copyrights reserved
+ */
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+
+import PM.PM;
+import util.PMUtil;
 
 public class hello {
     public String name;
     public int age;
+    public static PM pm;
     public hello(){
         System.out.println("nihao");
         this.name = "tiancheng";
@@ -11,12 +21,13 @@ public class hello {
     }
     
     public static void main(String[] args) {
-        hello hl = new hello();
-        List list = new ArrayList();
-        list.add(1);
-        System.out.println(list.size());
+        String a = "ni,hao";
+        String b = "nihao";
+        String[] c = b.split(",");
+//        String[] c = a.split(",");
 
-        System.out.println(hl.name);
+        System.out.println(c.length+" " + c[0]);
+//        Random random  = new Random([1,2,3]);
     }
 }
 

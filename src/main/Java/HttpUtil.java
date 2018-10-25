@@ -39,8 +39,8 @@ import org.apache.logging.log4j.LogManager;
  */
 public class HttpUtil {
 
-    private static Logger logger = LogManager.getLogger("HelloWorld");
-
+    private static final Logger logger = LogManager.getLogger(HttpUtil.class);
+//    private static final Logger logger = LogManager.getLogger("HelloWorld");
     /**
      * get请求
      * @return
@@ -170,10 +170,17 @@ public class HttpUtil {
         return null;
     }
 
+
+
+
+
     public static void main(String[] args) {
-//        HttpUtil.doPost();
-        String nn = HttpUtil.doGet("http://www.baidu.com");
+        logger.error("nihadfef");
+        //        HttpUtil.doPost();
+        String url = "http://localhost:8080";
+        String nn = HttpUtil.doGet(url);
         System.out.println(nn);
+
     }
 
 }
