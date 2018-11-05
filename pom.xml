@@ -93,6 +93,13 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.12</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/fr.myprysm.vertx/vertx-json -->
+        <dependency>
+            <groupId>fr.myprysm.vertx</groupId>
+            <artifactId>vertx-json</artifactId>
+            <version>0.1.3</version>
+        </dependency>
+
 
 
 

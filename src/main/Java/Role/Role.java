@@ -1,6 +1,7 @@
 package Role;
 
 import PM.PM;
+import dao.PMDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class Role {
     public Role() {
         this.name = "tiancheng";
         this.sex = Sex.MALE;
-        pms.add(new PM());
+        pms.add(PMDao.get());
     }
 
 

@@ -3,6 +3,6 @@
  */
 
 package login;public class Login {
-    public static final String TOKEN = "tiancheng&hulu";
+    public static final String TOKEN = "tianchenghulu";
 
 }

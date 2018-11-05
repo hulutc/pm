@@ -27,7 +27,7 @@ public class RoleDao {
 
     public boolean check(String name, String passwod) {
         System.out.println(jdbcTemplate);
-//        String sql = "select count(id) from u2 where name=? and password=?";
+//        String sql = "get count(id) from u2 where name=? and password=?";
 //        int i = jdbcTemplate.queryForInt(sql, new Object[]{name, passwod});
 //        if (i > 0) {
 //            return true;

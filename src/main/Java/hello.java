@@ -2,12 +2,10 @@
  * tiancheng copyrights reserved
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import PM.PM;
+import io.vertx.core.json.JsonObject;
 import util.PMUtil;
 
 public class hello {
@@ -21,13 +19,28 @@ public class hello {
     }
     
     public static void main(String[] args) {
-        String a = "ni,hao";
         String b = "nihao";
         String[] c = b.split(",");
 //        String[] c = a.split(",");
 
-        System.out.println(c.length+" " + c[0]);
-//        Random random  = new Random([1,2,3]);
+        JsonObject jb = JsonObject.mapFrom(new hello());
+        Map<String, String> map = new HashMap<>();
+        if(map.get("nihao") == null){
+            System.out.println("nihao");
+        }
+        System.out.println();
+        int bb = 50;
+        int base = 400;
+        int fenmu = 4000;
+        double ret = ((double)(bb+base)/fenmu);
+        double a = Math.sin(ret*(Math.PI/2));
+        System.out.println(a);
+
+        String[] strs = new String[2];
+        for(String str: strs){
+            System.out.println(str);
+        }
+        //        Random random  = new Random([1,2,3]);
     }
 }
 

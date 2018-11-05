@@ -52,7 +52,7 @@ public class Arena {
      * @param atk_order  1:stage_pm1攻击   2: stage_pm2攻击
      * @return
      */
-    public String attack(int atk_order, int skill_num) {
+    public Map attack(int atk_order, int skill_num) {
         PM pma, pmb;
         Role rolea, roleb;
         if(atk_order == 1){
@@ -67,6 +67,9 @@ public class Arena {
             roleb = this.role1;
         }
         Map map= pma.attack(skill_num, pmb);
+        if(!(boolean)map.get("success")){
+            return map;
+        }
         int hurt = (int) map.get("hurt");
         double effect = (double) map.get("effect");
         boolean die = (boolean) map.get("die");
@@ -103,7 +106,7 @@ public class Arena {
             ret += "\n\n" + pma;
         }
 
-        return ret;
+        return map;
 //        int hp = stage_pm1.attack(stage_pm2);
 //        String ret = stage_pm1.toString() + " PK " + stage_pm2.toString() + " :  " + hp;
 //        System.out.println(ret);

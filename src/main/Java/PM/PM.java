@@ -4,23 +4,14 @@
 
 package PM;
 
+import dao.SkillDao;
+import util.PMUtil.PMProperty;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import dao.Dao;
-import dao.PMDao;
-import dao.SkillDao;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import util.PMUtil.PMProperty;
-import static util.PMUtil.PROPERTY_MAP;
-import javax.sql.DataSource;
 
 
 
@@ -43,11 +34,13 @@ public class PM {
     };
 
 
-
     public int pm_id;
     public int pokemon_id;
     public String name;
-    public PMProperty[] properties = {PMProperty.NORMAL, null};
+    public int sex;
+    //    public PMProperty[] properties = {PMProperty.H1, null};
+    public String[] properties = new String[2];
+
     public ArrayList<Skill> skills = new ArrayList<>();
 
     public int hp = 0;
@@ -60,7 +53,7 @@ public class PM {
     public int die_exp = 0;  //被击败后，对方能够获取的经验值
 
 
-    private int exp = 0;     //获取到的经验值，升级后清零
+    public int exp = 0;     //获取到的经验值，升级后清零
     public int level = 0;
     public int level_max = 30;
 
@@ -69,11 +62,12 @@ public class PM {
             "妙蛙种子", "妙蛙草", "妙蛙花"};
 
     public PM(){
-        int seed = (int)(Math.random()*names.length);
-        init(names[seed]);
-        Skill skill = new Skill(1,"飞叶快刀");
-        skills.add(skill);
-        skills.add(new Skill(9,"催眠粉", 0, 1, PMProperty.GRASS));
+//        //        return PMDao.get();
+//        int seed = (int)(Math.random()*names.length);
+//        init(names[seed]);
+//        Skill skill = new Skill(1,"飞叶快刀");
+//        skills.add(skill);
+//        skills.add(new Skill(9,"催眠粉", 0, 1, PMProperty.GRASS));
     }
 
 
@@ -86,12 +80,15 @@ public class PM {
         try {
             pm_id = resultSet.getInt("id");
             name = resultSet.getString("name");
+            sex = resultSet.getInt("sex");
             String prop = resultSet.getString("property");
             String[] pps = prop.split(",");
-            properties[0] = PROPERTY_MAP.get(pps[0]);
-            if (pps.length  > 1) {
-                properties[1] = PROPERTY_MAP.get(pps[1]);
 
+//            properties[0] = PROPERTY_MAP.get(pps[0]);
+            properties[0] = pps[0];
+            if (pps.length  > 1) {
+//                properties[1] = PROPERTY_MAP.get(pps[1]);
+                properties[1] = pps[1];
             }
             skills = new ArrayList<>();
             String[] sks = resultSet.getString("skills").split(",");
@@ -115,10 +112,11 @@ public class PM {
             name = resultSet.getString("name");
             String prop = resultSet.getString("property");
             String[] pps = prop.split(",");
-            properties[0] = PROPERTY_MAP.get(pps[0]);
+//            properties[0] = PROPERTY_MAP.get(pps[0]);
+            properties[0] = pps[0];
             if (pps.length  > 1) {
-                properties[1] = PROPERTY_MAP.get(pps[1]);
-
+//                properties[1] = PROPERTY_MAP.get(pps[1]);
+                properties[1] = pps[1];
             }
             hp = resultSet.getInt("hp");
             mp = resultSet.getInt("mp");
@@ -143,7 +141,7 @@ public class PM {
     // TODO
 //    public void levelup(){
 //        Dao dao = new Dao();
-//        ResultSet rs = PMDao.select(pm_id);
+//        ResultSet rs = PMDao.get(pm_id);
 //        set_levelup(rs);
 //    }
 
@@ -173,8 +171,19 @@ public class PM {
     }
 
     public Map attack(int skill_num, PM pm) {
-        Skill skill = pm.skills.get(skill_num);
-        return skill.attack(pm);
+        System.out.println("pm: " + this.toString());
+        Skill skill = this.skills.get(skill_num);
+        if(mp < skill.mp){
+            Map<String, Object> map = new HashMap<>();
+            map.put("success", false);
+            return map;
+        }
+        Map map = skill.attack(pm);
+        boolean success = (boolean) map.get("success");
+        if(success){
+            mp -= skill.mp;
+        }
+        return map;
     }
 
     public void show() {
@@ -183,7 +192,7 @@ public class PM {
 
     public String toString()
     {
-        String str = name + "\n";
+        String str = name +  "   id" + this.pm_id +"\n";
         str += "生命:" + this.hp;
         str += "  魔法:" + this.mp;
         str += "  攻击:" + this.gongji;
