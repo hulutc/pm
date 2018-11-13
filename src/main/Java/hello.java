@@ -2,10 +2,17 @@
  * tiancheng copyrights reserved
  */
 
+import java.io.StringReader;
 import java.util.*;
 
 import PM.PM;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.mysql.cj.xdevapi.JsonParser;
+import dao.UserDao;
 import io.vertx.core.json.JsonObject;
+import model.User;
 import util.PMUtil;
 
 public class hello {
@@ -18,29 +25,25 @@ public class hello {
         this.age = 100;
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         String b = "nihao";
-        String[] c = b.split(",");
-//        String[] c = a.split(",");
+        User user = UserDao.select("zhang");
+        System.out.println(user);
+        JSONObject jobj = JSON.parseObject("{\"name\":\"李明\",\"age\":19}");
 
-        JsonObject jb = JsonObject.mapFrom(new hello());
-        Map<String, String> map = new HashMap<>();
-        if(map.get("nihao") == null){
-            System.out.println("nihao");
-        }
-        System.out.println();
-        int bb = 50;
-        int base = 400;
-        int fenmu = 4000;
-        double ret = ((double)(bb+base)/fenmu);
-        double a = Math.sin(ret*(Math.PI/2));
-        System.out.println(a);
+        System.out.println("now: "+ new Date().getTime());
+        Thread.sleep(1000);
+        System.out.println("now: "+ new Date().getTime());
 
-        String[] strs = new String[2];
-        for(String str: strs){
-            System.out.println(str);
+        System.out.println("nihao: "+ jobj.toString());
+        System.out.printf("name:%s,age:%d\n",jobj.getString("name"),jobj.getBigInteger("age"));
+        System.out.println(jobj.getInnerMap());
+
+        JSONArray jarr = JSON.parseArray("[{\"name\":\"李明\",\"age\":19},{\"name\":\"张三\",\"age\":12}]");
+        for(int i=0,len=jarr.size();i<len;i++){
+            JSONObject temp=  jarr.getJSONObject(i);
+            System.out.printf("name:%s,age:%d\n",temp.getString("name"),temp.getBigInteger("age"));
         }
-        //        Random random  = new Random([1,2,3]);
     }
 }
 

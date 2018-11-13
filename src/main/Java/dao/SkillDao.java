@@ -25,7 +25,9 @@ public class SkillDao {
                 return skill;
             }
         });
-        System.out.println(list);
+        if(list.size()==0){
+            return null;
+        }
         return (Skill)list.get(0);
     }
 }

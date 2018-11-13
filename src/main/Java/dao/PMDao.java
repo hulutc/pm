@@ -41,7 +41,9 @@ public class PMDao {
                 return pm;
             }
         });
-        System.out.println(list);
+        if(list.size()==0){
+            return null;
+        }
         return (PM) list.get(0);
     }
 
@@ -56,7 +58,9 @@ public class PMDao {
                 return pm;
             }
         });
-        System.out.println(list);
+        if(list.size()==0){
+            return null;
+        }
         return (PM) list.get(0);
     }
 }

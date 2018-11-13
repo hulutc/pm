@@ -4,34 +4,31 @@
 
 package controller;
 
-import io.vertx.core.json.JsonObject;
+import PM.PM;
+import Role.Role;
 import Scene.Arena;
 import Scene.GrassArena;
 import dao.PMDao;
-import dao.RoleDao;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import dao.UserDao;
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonObject;
+import login.Login;
+import model.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import PM.PM;
-import PM.Property;
-import Role.Role;
-import login.Login;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import static util.PMUtil.PMMessage.TOKEN_INVALID;
+import static util.Util.StatusFail;
+import static util.Util.jsonify;
 
 @Controller
 @RequestMapping("arena")
@@ -89,10 +86,7 @@ public class ArenaController {
 
     @ResponseBody
     @RequestMapping(value = "/walk", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public Map walk(@RequestParam(required = false) Integer steps, String token) {
-        if (!validate(token)) {
-            return this.jsonify(false, TOKEN_INVALID);
-        }
+    public ResponseEntity walk(@RequestParam(required = false) Integer steps, String token) {
         double ratio = 0.6;
         Role role = get_role(token);
         String ret = "没有遇到精灵";
@@ -105,28 +99,23 @@ public class ArenaController {
             ret = role.toString() + "  encountered  \n" + pm.toString() + "\nstart fighting!";
             ret += "\n";
             JsonObject js_pm = JsonObject.mapFrom(pm);
-            Map map = this.jsonify(true, "");
+            ResponseEntity re = jsonify(true, "");
+            Map map = (Map) re.getBody();
             map.put("pm", js_pm.toString());
-            return map;
+            return re;
 //            return ret;
         }
 //        for(int i=0; i<5; i++){
 //            role.add_pm(new PM());
 //        }
 
-        return this.kong();
+        HashMap<String, Object> data = new HashMap<String, Object>(){{
+            put("pm", null);
+        }};
+        System.out.println("leave walk");
+        return jsonify(false, "未遇到精灵", data);
     }
 
-    private Map jsonify(boolean ret, String msg) {
-        Map<String, String> map = new HashMap<String, String>();
-        String sret = "fail";
-        if (ret) {
-            sret = "success";
-        }
-        map.put("code", sret);
-        map.put("message", msg);
-        return map;
-    }
 
     private Map kong() {
         Map<String, String> map = new HashMap<String, String>();
@@ -135,9 +124,7 @@ public class ArenaController {
 
     @ResponseBody
     @RequestMapping(value = "/attack", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public Map attack(String token, int skill_num) {
-        if (!validate(token))
-            return this.jsonify(false, TOKEN_INVALID);
+    public ResponseEntity attack(String token, int skill_num) {
 
         System.out.println("keys: " + arenas.keySet());
         if (arenas.containsKey(token)) {
@@ -145,31 +132,45 @@ public class ArenaController {
             Arena arena = arenas.get(token);
             Map ret = arena.attack(1, skill_num - 1);
             if(!(boolean)ret.get("success")){
-                return this.jsonify(false, "mp 不足");
+                return jsonify(false, "mp 不足");
             }
-            Map map = this.jsonify(true, "");
+            ResponseEntity re = jsonify(true, "");
+            Map map = (Map) re.getBody();
             map.put("self", JsonObject.mapFrom(arena.stage_pm1).toString());
             map.put("opposite", JsonObject.mapFrom(arena.stage_pm2).toString());
             map.putAll(ret);
-            return map;
+            return re;
         }
-        return this.jsonify(true, "no arena exists");
+        return jsonify(true, "no arena exists");
     }
 
 
     @ResponseBody
     @RequestMapping(value = "/get_self", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public Map get_self(@RequestParam String token) {
-        if (!validate(token))
-            return jsonify(false, TOKEN_INVALID);
+    public ResponseEntity get_self(@RequestParam String token) {
+//        if (!validate(token))
+//            return jsonify(false, TOKEN_INVALID);
         Arena arena = arenas.get(token);
         System.out.println("self: " + arena);
-        Map map = this.jsonify(true, "");
+        ResponseEntity re = jsonify(true, "");
+        Map map = (Map) re.getBody();
         map.put("pm", JsonObject.mapFrom(arena.stage_pm1).toString());
         System.out.println(map.get("pm"));
-        return map;
+        return re;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public Map login(@RequestParam String username, String password, HttpServletResponse response) {
+        Map map = Login.login(username, password);
+        if(map.get("code").equals(StatusFail)){
+            response.setStatus(400);
+        }else{
+            response.addCookie(new Cookie("token", (String)map.remove("token")));
+        }
+        return map;
+    }
 
     public boolean validate(String token) {
         if (token.equals(Login.TOKEN)) {
@@ -196,8 +197,36 @@ public class ArenaController {
 
     @ResponseBody
     @RequestMapping(value = "/gtest", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public Object test() {
-        int num = PMDao.get_length();
-        return num;
+    public HttpServletResponse test(HttpServletResponse response) {
+
+        return response;
+//        return jsonify(true, "nihao");
     }
+
+    public static void usertest(){
+        String b = "nihao";
+        User user = UserDao.select("zhang");
+        System.out.println(user);
+    }
+
+    @RequestMapping("/addCookie")
+    public ResponseEntity addCookie(HttpServletResponse response, String name){
+        Cookie cookie = new Cookie("jwt", "tiancheng");
+        cookie.setMaxAge(30 * 60);// 设置为30min
+        cookie.setPath("/");
+        System.out.println("已添加===============");
+        response.addCookie(cookie);
+        return jsonify(true, "sucess");
+    }
+
+    @RequestMapping("/getCookie")
+    public ResponseEntity getCookie(HttpServletRequest request, String name){
+        Cookie[] cookies = request.getCookies();
+        for(Cookie ck: cookies){
+            System.out.println(ck.getName() + ": " + ck.getValue());
+        }
+        return jsonify(true, "sucess");
+    }
+
+
 }

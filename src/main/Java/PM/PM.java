@@ -37,6 +37,7 @@ public class PM {
     public int pm_id;
     public int pokemon_id;
     public String name;
+    public String image;
     public int sex;
     //    public PMProperty[] properties = {PMProperty.H1, null};
     public String[] properties = new String[2];
@@ -80,6 +81,7 @@ public class PM {
         try {
             pm_id = resultSet.getInt("id");
             name = resultSet.getString("name");
+            image = resultSet.getString("image");
             sex = resultSet.getInt("sex");
             String prop = resultSet.getString("property");
             String[] pps = prop.split(",");

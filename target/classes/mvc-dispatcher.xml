@@ -41,4 +41,13 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/arena/login"/>
+            <bean class="interceptor.SessionInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 </beans>
